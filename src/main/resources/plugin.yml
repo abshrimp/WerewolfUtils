@@ -1,0 +1,5 @@
+name: WerewolfUtils
+version: '1.0'
+main: com.werewolf.utils.WerewolfUtilsPlugin
+api-version: '1.21'
+description: GUI and totem utilities for WerewolfQuest datapack
