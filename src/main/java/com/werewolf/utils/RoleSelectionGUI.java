@@ -24,7 +24,7 @@ public class RoleSelectionGUI {
         new RoleEntry("エリクサー", 7, "#elixir_count", Material.LIME_CONCRETE, NamedTextColor.GREEN),
         new RoleEntry("ゲッサー", 8, "#guesser_count", Material.LIME_CONCRETE, NamedTextColor.GOLD),
         new RoleEntry("ギャンブラー", 9, "#gambler_count", Material.LIME_CONCRETE, NamedTextColor.YELLOW),
-        new RoleEntry("スペランカー", 15, "#spelunker_count", Material.LIME_CONCRETE, NamedTextColor.LIGHT_PURPLE),
+        new RoleEntry("パン屋", 16, "#bakery_count", Material.LIME_CONCRETE, NamedTextColor.GOLD),
     };
 
     private static final RoleEntry[] WOLF_ROLES = {
@@ -40,6 +40,7 @@ public class RoleSelectionGUI {
     private static final RoleEntry[] THIRD_ROLES = {
         new RoleEntry("吸血鬼", 4, "#vampire_count", Material.YELLOW_CONCRETE, NamedTextColor.RED),
         new RoleEntry("ゾンビ", 14, "#zombie_count", Material.YELLOW_CONCRETE, NamedTextColor.DARK_GREEN),
+        new RoleEntry("スペランカー", 15, "#spelunker_count", Material.LIME_CONCRETE, NamedTextColor.LIGHT_PURPLE),
     };
 
     public static void open(Player player) {
