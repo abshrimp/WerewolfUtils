@@ -17,7 +17,7 @@ public enum SelectionType {
         "ww_blessing_target",
         Component.text("===== 騎士の加護の対象を選択 =====").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
         "ww_blessing_self",
-        false
+        true
     ),
     GUESSER(
         "ww_gui_guesser",
