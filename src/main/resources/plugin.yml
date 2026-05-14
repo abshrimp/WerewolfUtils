@@ -8,7 +8,18 @@ commands:
     description: WerewolfQuestのゲーム設定GUIを開きます
     usage: /wwconfig
     permission: werewolfutils.config
+  wwstart:
+    description: WerewolfQuestのゲームを開始します
+    usage: /wwstart
+    permission: werewolfutils.game
+  wwend:
+    description: WerewolfQuestのゲームを終了します
+    usage: /wwend
+    permission: werewolfutils.game
 permissions:
   werewolfutils.config:
     description: ゲーム設定GUIを開く権限
+    default: op
+  werewolfutils.game:
+    description: ゲームの開始/終了コマンドを使う権限
     default: op

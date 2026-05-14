@@ -25,6 +25,13 @@ public class WerewolfUtilsPlugin extends JavaPlugin {
         if (getCommand("wwconfig") != null) {
             getCommand("wwconfig").setExecutor(new ConfigCommand(this));
         }
+        GameCommand gameCommand = new GameCommand(this);
+        if (getCommand("wwstart") != null) {
+            getCommand("wwstart").setExecutor(gameCommand);
+        }
+        if (getCommand("wwend") != null) {
+            getCommand("wwend").setExecutor(gameCommand);
+        }
         getLogger().info("WerewolfUtils enabled");
     }
 

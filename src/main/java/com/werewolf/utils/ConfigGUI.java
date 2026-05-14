@@ -23,14 +23,13 @@ import java.util.List;
  */
 public class ConfigGUI {
 
-    public static final int PAGE_COUNT = 3;
+    public static final int PAGE_COUNT = 2;
     public static final String NAV_KEY = "config_nav";
     public static final String SETTING_KEY = "config_setting";
 
     private static final Component[] TITLES = {
-        Component.text("⚙ ゲーム設定 - 基本設定").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
+        Component.text("⚙ ゲーム設定 - 基本/闇鍋").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
         Component.text("⚙ ゲーム設定 - 役職人数").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
-        Component.text("⚙ ゲーム設定 - 闇鍋/第三陣営").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD),
     };
 
     public static void open(Player player, WerewolfUtilsPlugin plugin, int page) {
@@ -49,7 +48,6 @@ public class ConfigGUI {
         if (page == 1) {
             gui.setItem(0, header("【村人陣営】", Material.GREEN_STAINED_GLASS_PANE, NamedTextColor.GREEN));
             gui.setItem(9, header("【人狼陣営】", Material.RED_STAINED_GLASS_PANE, NamedTextColor.RED));
-        } else if (page == 2) {
             gui.setItem(18, header("【第三陣営】", Material.YELLOW_STAINED_GLASS_PANE, NamedTextColor.GOLD));
         }
 
