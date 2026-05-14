@@ -3,3 +3,12 @@ version: '1.0'
 main: com.werewolf.utils.WerewolfUtilsPlugin
 api-version: '1.21'
 description: GUI and totem utilities for WerewolfQuest datapack
+commands:
+  wwconfig:
+    description: WerewolfQuestのゲーム設定GUIを開きます
+    usage: /wwconfig
+    permission: werewolfutils.config
+permissions:
+  werewolfutils.config:
+    description: ゲーム設定GUIを開く権限
+    default: op

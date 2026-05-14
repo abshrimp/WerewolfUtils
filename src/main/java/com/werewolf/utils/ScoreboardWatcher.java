@@ -41,5 +41,12 @@ public class ScoreboardWatcher implements Runnable {
                 }
             }
         }
+
+        // データパック再読み込み時に、GUIで保存した設定を再適用する
+        Objective reapplyObj = sb.getObjective("ww_gui_config");
+        if (reapplyObj != null && reapplyObj.getScore("#reapply").getScore() == 1) {
+            reapplyObj.getScore("#reapply").setScore(0);
+            plugin.getConfigManager().applyToScoreboard();
+        }
     }
 }

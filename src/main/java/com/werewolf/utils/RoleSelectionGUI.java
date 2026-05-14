@@ -24,7 +24,7 @@ public class RoleSelectionGUI {
         new RoleEntry("エリクサー", 7, "#elixir_count", Material.LIME_CONCRETE, NamedTextColor.GREEN),
         new RoleEntry("ゲッサー", 8, "#guesser_count", Material.LIME_CONCRETE, NamedTextColor.GOLD),
         new RoleEntry("ギャンブラー", 9, "#gambler_count", Material.LIME_CONCRETE, NamedTextColor.YELLOW),
-        new RoleEntry("パン屋", 16, "#bakery_count", Material.LIME_CONCRETE, NamedTextColor.GOLD),
+        new RoleEntry("パン屋", 16, "#baker_count", Material.LIME_CONCRETE, NamedTextColor.GOLD),
     };
 
     private static final RoleEntry[] WOLF_ROLES = {
