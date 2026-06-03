@@ -25,6 +25,7 @@ public class RoleSelectionGUI {
         new RoleEntry("ゲッサー", 8, "#guesser_count", Material.LIME_CONCRETE, NamedTextColor.GOLD),
         new RoleEntry("ギャンブラー", 9, "#gambler_count", Material.LIME_CONCRETE, NamedTextColor.YELLOW),
         new RoleEntry("パン屋", 16, "#baker_count", Material.LIME_CONCRETE, NamedTextColor.GOLD),
+        new RoleEntry("シーア", 18, "#seer_count", Material.LIME_CONCRETE, NamedTextColor.WHITE),
     };
 
     private static final RoleEntry[] WOLF_ROLES = {
@@ -35,12 +36,14 @@ public class RoleSelectionGUI {
         new RoleEntry("イビルゲッサー", 11, "#evil_guesser_count", Material.RED_CONCRETE, NamedTextColor.DARK_RED),
         new RoleEntry("トラッパー", 12, "#trapper_count", Material.RED_CONCRETE, NamedTextColor.DARK_RED),
         new RoleEntry("カメレオン", 13, "#chameleon_count", Material.RED_CONCRETE, NamedTextColor.DARK_RED),
+        new RoleEntry("爆弾魔", 19, "#bomber_count", Material.RED_CONCRETE, NamedTextColor.DARK_RED),
     };
 
     private static final RoleEntry[] THIRD_ROLES = {
         new RoleEntry("吸血鬼", 4, "#vampire_count", Material.YELLOW_CONCRETE, NamedTextColor.RED),
         new RoleEntry("ゾンビ", 14, "#zombie_count", Material.YELLOW_CONCRETE, NamedTextColor.DARK_GREEN),
         new RoleEntry("スペランカー", 15, "#spelunker_count", Material.LIME_CONCRETE, NamedTextColor.LIGHT_PURPLE),
+        new RoleEntry("ソウルイーター", 17, "#soul_eater_count", Material.YELLOW_CONCRETE, NamedTextColor.DARK_AQUA),
     };
 
     public static void open(Player player) {

@@ -26,15 +26,18 @@ public enum ConfigSetting {
     GUESSER("#guesser_count", "ゲッサー", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 4, "ゲッサーの人数"),
     GAMBLER("#gambler_count", "ギャンブラー", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 5, "ギャンブラーの人数"),
     BAKER("#baker_count", "パン屋", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 6, "パン屋の人数"),
+    SEER("#seer_count", "シーア", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 7, "シーアの人数"),
     WEREWOLF("#werewolf_count", "人狼", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 10, "人狼の人数 (闇鍋では人狼陣営の人数)"),
     ACCOMPLICE("#accomplice_count", "共犯者", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 11, "共犯者の人数"),
     EVIL_ELIXIR("#evil_elixir_count", "イビルエリクサー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 12, "イビルエリクサーの人数"),
     EVIL_GUESSER("#evil_guesser_count", "イビルゲッサー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 13, "イビルゲッサーの人数"),
     TRAPPER("#trapper_count", "トラッパー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 14, "トラッパーの人数"),
     CHAMELEON("#chameleon_count", "カメレオン", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 15, "カメレオンの人数"),
+    BOMBER("#bomber_count", "爆弾魔", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 16, "爆弾魔の人数"),
     VAMPIRE("#vampire_count", "吸血鬼", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 19, "吸血鬼の人数"),
     ZOMBIE("#zombie_count", "ゾンビ", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 20, "ゾンビの人数"),
-    SPELUNKER("#spelunker_count", "スペランカー", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 21, "スペランカーの人数");
+    SPELUNKER("#spelunker_count", "スペランカー", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 21, "スペランカーの人数"),
+    SOUL_EATER("#soul_eater_count", "ソウルイーター", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 22, "ソウルイーターの人数");
 
     public enum Type { NUMERIC, TOGGLE }
 
