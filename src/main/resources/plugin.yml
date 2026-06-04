@@ -23,3 +23,6 @@ permissions:
   werewolfutils.game:
     description: ゲームの開始/終了コマンドを使う権限
     default: op
+  werewolfutils.bypass.interact:
+    description: ゲーム中でも樽・チェスト・かまど等の機能ブロックや額縁を操作できる権限
+    default: false
