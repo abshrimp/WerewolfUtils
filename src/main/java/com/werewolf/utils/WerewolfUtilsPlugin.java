@@ -13,12 +13,14 @@ public class WerewolfUtilsPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         ensureObjectives();
+        saveDefaultConfig();
         configManager = new ConfigManager(this);
         configManager.load();
         configManager.applyToScoreboard();
         Bukkit.getPluginManager().registerEvents(new GUIListener(this), this);
         Bukkit.getPluginManager().registerEvents(new TotemListener(), this);
         Bukkit.getPluginManager().registerEvents(new DropListener(), this);
+        Bukkit.getPluginManager().registerEvents(new InteractionListener(this), this);
         Bukkit.getScheduler().runTaskTimer(this, new ScoreboardWatcher(this), 1L, 1L);
         nametagManager = new NametagManager(this);
         Bukkit.getScheduler().runTaskTimer(this, nametagManager, 1L, 1L);
