@@ -18,6 +18,7 @@ public enum ConfigSetting {
     MISSION_ENABLED("#mission_enabled", "ミッションシステム", Type.TOGGLE, 0, 1, 1, 1, Material.FILLED_MAP, 0, 22, "2夜ごとにミッションが発生する"),
     YAMINABE("#yaminabe", "闇鍋モード", Type.TOGGLE, 0, 1, 1, 1, Material.CAULDRON, 0, 30, "闇鍋モードの有効/無効"),
     THIRD_FACTION_CHANCE("#third_faction_chance", "第三陣営出現確率", Type.NUMERIC, 0, 100, 5, 25, Material.NETHER_STAR, 0, 31, "闇鍋で第三陣営が1人でも出現する確率 (%)"),
+    THIRD_FACTION_MAX("#third_faction_max", "第三陣営最大人数", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 0, 32, "闇鍋で第三陣営の最大人数 (0=制限なし)"),
 
     // ===== ページ1: 役職人数 (村人陣営 / 人狼陣営 / 第三陣営) =====
     WOLFPOSSESSED("#wolfpossessed_count", "狼憑き", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 1, "狼憑きの人数"),
