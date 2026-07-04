@@ -12,3 +12,7 @@
 # ゲーム外では常に操作できます。
 # werewolfutils.bypass.interact 権限を持つプレイヤーは制限を受けません。
 allow-interaction: false
+
+# /wwstart をコンソール等から実行した時の人狼ゲーム実行ワールド
+# プレイヤー実行時はそのプレイヤーがいるワールドが優先されます。
+game-world: world
