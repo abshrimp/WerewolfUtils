@@ -20,6 +20,9 @@ public class TotemListener implements Listener {
     public void onDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
+        // ゲームに生存参加中のプレイヤーのみ対象 (別ワールドやゲーム外での誤発動を防ぐ)
+        if (!player.getScoreboardTags().contains("ww_alive")) return;
+
         double health = player.getHealth();
         double damage = event.getFinalDamage();
 

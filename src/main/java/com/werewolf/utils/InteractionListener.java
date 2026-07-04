@@ -84,6 +84,8 @@ public class InteractionListener implements Listener {
         if (player.hasPermission("werewolfutils.bypass.interact")) return;
         if (plugin.getConfig().getBoolean("allow-interaction", false)) return;
         if (!isGameRunning()) return;
+        // ゲーム参加者のみ制限する (Multiverse等で別ワールドにいるプレイヤーは対象外)
+        if (!player.getScoreboardTags().contains("ww_playing")) return;
         event.setCancelled(true);
     }
 
