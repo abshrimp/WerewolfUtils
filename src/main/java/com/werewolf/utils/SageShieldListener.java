@@ -1,12 +1,17 @@
 package com.werewolf.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -21,8 +26,31 @@ import org.bukkit.scoreboard.Scoreboard;
  *
  * スケルトンなどMob起因の攻撃はキャンセルしない (仕様: スケルトンの攻撃は防げない)。
  * ダメージ0の被弾 (スタングレネードの雪玉など) も反射しない。
+ *
+ * また、賢者の盾アイテムの右クリック発動もここで検知する。
+ * consumable + using_item 進捗による発動はクライアントの使用予測に依存し、
+ * 見た目偽装 (ItemDisguiseManager) と組み合わせると特に統合版で発動しないことが
+ * あるため、PlayerInteractEvent から直接データパックの発動関数を呼ぶ。
+ * (進捗経由でも同tickに発動した場合、sage_shield_use 側のガードで二重発動はしない)
  */
 public class SageShieldListener implements Listener {
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) return;
+        Action action = event.getAction();
+        if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) return;
+        Player player = event.getPlayer();
+        if (!player.getScoreboardTags().contains("ww_alive")) return;
+
+        ItemStack item = event.getItem();
+        if (item == null || item.getType() != Material.COOKED_BEEF || !item.hasItemMeta()) return;
+        String snbt = item.getItemMeta().getAsString();
+        if (!snbt.contains("custom_data") || !snbt.contains("sage_shield")) return;
+
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+            "execute as " + player.getUniqueId() + " at @s run function werewolf:roles/sage_shield_use");
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent event) {

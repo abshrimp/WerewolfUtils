@@ -33,11 +33,13 @@ import java.util.UUID;
  */
 public class ItemDisguiseManager implements Runnable {
 
-    /** custom_data 内 ww.id → 所持者に見せる本来のアイテム */
+    /** custom_data 内 ww.id → 所持者に見せる本来のアイテム。
+     *  盾(SHIELD)は不可: クライアントが「構える」動作をしてしまい右クリック使用が発動しないため、
+     *  賢者の盾は使用動作を持たないオウムガイの殻で表示する。 */
     private static final Map<String, Material> TRUE_LOOKS = Map.of(
         "infection_check", Material.PAPER,
         "guesser_book", Material.BOOK,
-        "sage_shield", Material.SHIELD,
+        "sage_shield", Material.NAUTILUS_SHELL,
         "sampler", Material.AMETHYST_SHARD
     );
 
@@ -80,6 +82,10 @@ public class ItemDisguiseManager implements Runnable {
             lastSent.remove(p.getUniqueId());
             return;
         }
+
+        // アイテム使用中(食べる・構える等)はスロット再送がクライアントの使用状態を
+        // 中断してしまうため送らない (使用終了後のtickで再送される)
+        if (p.isHandRaised()) return;
 
         PlayerInventory inv = p.getInventory();
         int fingerprint = 1;
