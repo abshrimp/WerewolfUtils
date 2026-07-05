@@ -3,106 +3,205 @@ package com.werewolf.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.EnumSet;
-import java.util.Set;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
- * 役職固有アイテム(感染確認/ゲッサーの書/賢者の盾/サンプラー)を、
- * 手に持っても所持者以外のプレイヤーにはステーキ(cooked_beef)に見せる偽装処理。
+ * 役職固有アイテム(感染確認/ゲッサーの書/賢者の盾/サンプラー)の見た目制御。
  *
- * 毎tick、対象アイテムを手に持つプレイヤーについて、同ワールドの他プレイヤーへ
- * 偽の装備パケット(sendEquipmentChange)を送信して見た目を上書きする。
- * サーバーが実際の装備を再送信(持ち替え・視界に入った直後など)しても、
- * 次のtickで再び偽装されるため、見えるのは最大1tick(50ms)だけで実用上気付かれない。
- * 所持者自身の見た目はクライアント側のインベントリ情報で描画されるため影響を受けない。
- * GeyserMC経由の統合版クライアントにも SetEquipment → MobEquipmentPacket として翻訳される。
+ * アイテムの実体はデータパック側で cooked_beef (ステーキ) として配布されるため、
+ * 他のプレイヤーからは Java版・統合版(Geyser) を問わず常にステーキに見える。
+ * このクラスは「所持者本人」のクライアントにだけ、インベントリスロット同期パケット
+ * (ClientboundContainerSetSlotPacket) を送り、本来のアイテム(紙・本・盾・アメジストの欠片)
+ * の見た目で表示させる。スロット同期はGeyserがインベントリ補正で常用する経路のため、
+ * 統合版の所持者にも反映される。
  *
- * 注意: runTaskTimer のタスクは run() から例外が漏れると恒久的にキャンセルされ、
- * 以降ゲームが終わるまで誰も偽装されなくなる (切断処理中のプレイヤーへの送信などで
- * 稀に例外が起き得る)。そのためプレイヤー単位・送信単位で例外を握りつぶし、
- * 発生時は1分に1回だけ警告ログを出す。
+ * 以前の実装(他人向けに sendEquipmentChange で偽装)は、統合版クライアントが
+ * リモートプレイヤーの装備上書きパケットを反映しないため廃止した。
+ *
+ * 注意: runTaskTimer のタスクは run() から例外が漏れると恒久的にキャンセルされるため、
+ * プレイヤー単位で例外を握りつぶし、発生時は1分に1回だけ警告ログを出す。
  */
 public class ItemDisguiseManager implements Runnable {
 
-    /** 偽装対象アイテムの custom_data 内 ww.id */
-    private static final String[] DISGUISED_IDS = {
-        "infection_check",
-        "guesser_book",
-        "sage_shield",
-        "sampler",
-    };
-
-    /** 偽装対象になり得るアイテム素材 (早期リターン用) */
-    private static final Set<Material> DISGUISED_MATERIALS =
-        EnumSet.of(Material.PAPER, Material.BOOK, Material.SHIELD, Material.AMETHYST_SHARD);
+    /** custom_data 内 ww.id → 所持者に見せる本来のアイテム */
+    private static final Map<String, Material> TRUE_LOOKS = Map.of(
+        "infection_check", Material.PAPER,
+        "guesser_book", Material.BOOK,
+        "sage_shield", Material.SHIELD,
+        "sampler", Material.AMETHYST_SHARD
+    );
 
     private static final long LOG_INTERVAL_MS = 60_000L;
+    /** 変化がなくても再送するハートビート間隔 (tick) */
+    private static final int HEARTBEAT_TICKS = 20;
 
     private final JavaPlugin plugin;
+    /** プレイヤーごとの前回送信内容のフィンガープリント (0=未送信/要再送) */
+    private final Map<UUID, Integer> lastSent = new HashMap<>();
     private long lastErrorLogAt = 0L;
+    private int tick = 0;
 
     public ItemDisguiseManager(JavaPlugin plugin) {
         this.plugin = plugin;
+        if (!SlotPacket.AVAILABLE) {
+            plugin.getLogger().warning("ItemDisguiseManager: NMSパケット初期化に失敗したため、所持者向けの見た目復元を無効化します: " + SlotPacket.INIT_ERROR);
+        }
     }
 
     @Override
     public void run() {
-        for (Player holder : Bukkit.getOnlinePlayers()) {
+        if (!SlotPacket.AVAILABLE) return;
+        tick++;
+        boolean heartbeat = tick % HEARTBEAT_TICKS == 0;
+        lastSent.keySet().removeIf(id -> Bukkit.getPlayer(id) == null);
+        for (Player p : Bukkit.getOnlinePlayers()) {
             try {
-                disguiseHolder(holder);
+                revealToHolder(p, heartbeat);
             } catch (Exception e) {
                 logThrottled(e);
             }
         }
     }
 
-    private void disguiseHolder(Player holder) {
-        if (!holder.isOnline()) return;
-        ItemStack main = holder.getInventory().getItemInMainHand();
-        ItemStack off = holder.getInventory().getItemInOffHand();
-        boolean disguiseMain = isDisguised(main);
-        boolean disguiseOff = isDisguised(off);
-        if (!disguiseMain && !disguiseOff) return;
+    private void revealToHolder(Player p, boolean heartbeat) throws Exception {
+        // チェスト・取引などのGUIを開いている間はスロット番号が変わるため送らない。
+        // フィンガープリントを消しておき、閉じた直後に必ず再送させる。
+        if (p.getOpenInventory().getType() != InventoryType.CRAFTING) {
+            lastSent.remove(p.getUniqueId());
+            return;
+        }
 
-        ItemStack fakeMain = disguiseMain ? fake(main) : null;
-        ItemStack fakeOff = disguiseOff ? fake(off) : null;
-        for (Player viewer : holder.getWorld().getPlayers()) {
-            if (viewer.equals(holder)) continue;
-            try {
-                if (disguiseMain) viewer.sendEquipmentChange(holder, EquipmentSlot.HAND, fakeMain);
-                if (disguiseOff) viewer.sendEquipmentChange(holder, EquipmentSlot.OFF_HAND, fakeOff);
-            } catch (Exception e) {
-                // 切断直後のviewerなどで失敗しても、他のviewerへの偽装は続行する
-                logThrottled(e);
+        PlayerInventory inv = p.getInventory();
+        int fingerprint = 1;
+        // 対象スロットを収集 (メインインベントリ 0-35 とオフハンド)
+        Material[] looks = new Material[37];
+        for (int slot = 0; slot <= 35; slot++) {
+            Material look = trueLook(inv.getItem(slot));
+            looks[slot] = look;
+            if (look != null) {
+                ItemStack item = inv.getItem(slot);
+                fingerprint = fingerprint * 31 + slot;
+                fingerprint = fingerprint * 31 + look.ordinal();
+                fingerprint = fingerprint * 31 + item.getAmount();
             }
+        }
+        Material offLook = trueLook(inv.getItemInOffHand());
+        looks[36] = offLook;
+        if (offLook != null) {
+            fingerprint = fingerprint * 31 + 36;
+            fingerprint = fingerprint * 31 + offLook.ordinal();
+            fingerprint = fingerprint * 31 + inv.getItemInOffHand().getAmount();
+        }
+
+        if (fingerprint == 1) {
+            lastSent.remove(p.getUniqueId());
+            return;
+        }
+        Integer prev = lastSent.get(p.getUniqueId());
+        if (!heartbeat && prev != null && prev == fingerprint) return;
+        lastSent.put(p.getUniqueId(), fingerprint);
+
+        for (int slot = 0; slot <= 35; slot++) {
+            if (looks[slot] == null) continue;
+            // network slot: ホットバー(0-8)→36-44、メイン(9-35)→そのまま
+            int netSlot = slot < 9 ? 36 + slot : slot;
+            SlotPacket.send(p, netSlot, inv.getItem(slot).withType(looks[slot]));
+        }
+        if (offLook != null) {
+            SlotPacket.send(p, 45, inv.getItemInOffHand().withType(offLook));
         }
     }
 
-    private boolean isDisguised(ItemStack item) {
-        if (item == null || !DISGUISED_MATERIALS.contains(item.getType()) || !item.hasItemMeta()) return false;
+    private static Material trueLook(ItemStack item) {
+        if (item == null || item.getType() != Material.COOKED_BEEF || !item.hasItemMeta()) return null;
         String snbt = item.getItemMeta().getAsString();
-        if (!snbt.contains("custom_data")) return false;
-        for (String id : DISGUISED_IDS) {
+        if (!snbt.contains("custom_data")) return null;
+        for (Map.Entry<String, Material> e : TRUE_LOOKS.entrySet()) {
+            String id = e.getKey();
             // SNBTのクォート形式差 (id:"x" / id:'x' / id:x) に依存しないよう部分一致で判定
             if (snbt.contains("id:\"" + id + "\"") || snbt.contains("id:'" + id + "'") || snbt.contains("id:" + id)) {
-                return true;
+                return e.getValue();
             }
         }
-        return false;
-    }
-
-    private static ItemStack fake(ItemStack real) {
-        return new ItemStack(Material.COOKED_BEEF, Math.max(1, real.getAmount()));
+        return null;
     }
 
     private void logThrottled(Exception e) {
         long now = System.currentTimeMillis();
         if (now - lastErrorLogAt < LOG_INTERVAL_MS) return;
         lastErrorLogAt = now;
-        plugin.getLogger().warning("ItemDisguiseManager: 偽装パケット送信に失敗 (継続します): " + e);
+        plugin.getLogger().warning("ItemDisguiseManager: スロット偽装パケット送信に失敗 (継続します): " + e);
+    }
+
+    /**
+     * ClientboundContainerSetSlotPacket をリフレクションで送信するヘルパー。
+     * paper-api のみに依存してビルドするため、NMS(Mojangマッピング)へは実行時に
+     * リフレクションでアクセスする (Paper 1.20.5+ はランタイムがMojangマッピング)。
+     */
+    private static final class SlotPacket {
+        static final boolean AVAILABLE;
+        static final String INIT_ERROR;
+
+        private static Method getHandle;        // CraftPlayer#getHandle -> ServerPlayer
+        private static Field connectionField;   // ServerPlayer.connection
+        private static Method sendMethod;       // ServerCommonPacketListenerImpl#send(Packet)
+        private static Field inventoryMenuField;// ServerPlayer.inventoryMenu
+        private static Field containerIdField;  // AbstractContainerMenu.containerId
+        private static Method getStateId;       // AbstractContainerMenu#getStateId()
+        private static Constructor<?> packetCtor; // ClientboundContainerSetSlotPacket(int,int,int,ItemStack)
+        private static Method asNmsCopy;        // CraftItemStack.asNMSCopy(ItemStack)
+
+        static {
+            boolean ok = false;
+            String err = "";
+            try {
+                Class<?> serverPlayer = Class.forName("net.minecraft.server.level.ServerPlayer");
+                Class<?> menuClass = Class.forName("net.minecraft.world.inventory.AbstractContainerMenu");
+                Class<?> packetClass = Class.forName("net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket");
+                Class<?> packetBase = Class.forName("net.minecraft.network.protocol.Packet");
+                Class<?> nmsItem = Class.forName("net.minecraft.world.item.ItemStack");
+
+                connectionField = serverPlayer.getField("connection");
+                inventoryMenuField = serverPlayer.getField("inventoryMenu");
+                containerIdField = menuClass.getField("containerId");
+                getStateId = menuClass.getMethod("getStateId");
+                packetCtor = packetClass.getConstructor(int.class, int.class, int.class, nmsItem);
+                sendMethod = connectionField.getType().getMethod("send", packetBase);
+
+                // org.bukkit.craftbukkit(.vX_XX_RX)?.inventory.CraftItemStack
+                String craftPkg = Bukkit.getServer().getClass().getPackage().getName();
+                Class<?> craftItemStack = Class.forName(craftPkg + ".inventory.CraftItemStack");
+                asNmsCopy = craftItemStack.getMethod("asNMSCopy", ItemStack.class);
+
+                ok = true;
+            } catch (Exception e) {
+                err = e.toString();
+            }
+            AVAILABLE = ok;
+            INIT_ERROR = err;
+        }
+
+        static void send(Player player, int netSlot, ItemStack fakeItem) throws Exception {
+            if (getHandle == null) {
+                getHandle = player.getClass().getMethod("getHandle");
+            }
+            Object handle = getHandle.invoke(player);
+            Object menu = inventoryMenuField.get(handle);
+            int containerId = containerIdField.getInt(menu);
+            int stateId = (int) getStateId.invoke(menu);
+            Object nms = asNmsCopy.invoke(null, fakeItem);
+            Object packet = packetCtor.newInstance(containerId, stateId, netSlot, nms);
+            sendMethod.invoke(connectionField.get(handle), packet);
+        }
     }
 }
