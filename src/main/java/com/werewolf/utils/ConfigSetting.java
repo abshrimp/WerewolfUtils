@@ -20,7 +20,7 @@ public enum ConfigSetting {
     THIRD_FACTION_CHANCE("#third_faction_chance", "第三陣営出現確率", Type.NUMERIC, 0, 100, 5, 25, Material.NETHER_STAR, 0, 31, "闇鍋で第三陣営が1人でも出現する確率 (%)"),
     THIRD_FACTION_MAX("#third_faction_max", "第三陣営最大人数", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 0, 32, "闇鍋で第三陣営の最大人数 (0=制限なし)"),
 
-    // ===== ページ1: 役職人数 (村人陣営 / 人狼陣営 / 第三陣営) =====
+    // ===== ページ1: 役職人数 (村人陣営: 行0-1 / 人狼陣営: 行2 / 第三陣営: 行3) =====
     WOLFPOSSESSED("#wolfpossessed_count", "狼憑き", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 1, "狼憑きの人数"),
     FORTUNE_TELLER("#fortune_teller_count", "占い師", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 2, "占い師の人数"),
     ELIXIR("#elixir_count", "エリクサー", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 3, "エリクサーの人数"),
@@ -28,17 +28,21 @@ public enum ConfigSetting {
     GAMBLER("#gambler_count", "ギャンブラー", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 5, "ギャンブラーの人数"),
     BAKER("#baker_count", "パン屋", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 6, "パン屋の人数"),
     SEER("#seer_count", "シーア", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 7, "シーアの人数"),
-    WEREWOLF("#werewolf_count", "人狼", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 10, "人狼の人数 (闇鍋では人狼陣営の人数)"),
-    ACCOMPLICE("#accomplice_count", "共犯者", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 11, "共犯者の人数"),
-    EVIL_ELIXIR("#evil_elixir_count", "イビルエリクサー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 12, "イビルエリクサーの人数"),
-    EVIL_GUESSER("#evil_guesser_count", "イビルゲッサー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 13, "イビルゲッサーの人数"),
-    TRAPPER("#trapper_count", "トラッパー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 14, "トラッパーの人数"),
-    CHAMELEON("#chameleon_count", "カメレオン", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 15, "カメレオンの人数"),
-    BOMBER("#bomber_count", "爆弾魔", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 16, "爆弾魔の人数"),
-    VAMPIRE("#vampire_count", "吸血鬼", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 19, "吸血鬼の人数"),
-    ZOMBIE("#zombie_count", "ゾンビ", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 20, "ゾンビの人数"),
-    SPELUNKER("#spelunker_count", "スペランカー", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 21, "スペランカーの人数"),
-    SOUL_EATER("#soul_eater_count", "ソウルイーター", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 22, "ソウルイーターの人数");
+    SAGE("#sage_count", "賢者", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 8, "賢者の人数"),
+    RESEARCHER("#researcher_count", "研究者", Type.NUMERIC, 0, 50, 1, 5, Material.LIME_CONCRETE, 1, 10, "研究者の人数"),
+    WEREWOLF("#werewolf_count", "人狼", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 19, "人狼の人数 (闇鍋では人狼陣営の人数)"),
+    ACCOMPLICE("#accomplice_count", "共犯者", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 20, "共犯者の人数"),
+    EVIL_ELIXIR("#evil_elixir_count", "イビルエリクサー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 21, "イビルエリクサーの人数"),
+    EVIL_GUESSER("#evil_guesser_count", "イビルゲッサー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 22, "イビルゲッサーの人数"),
+    TRAPPER("#trapper_count", "トラッパー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 23, "トラッパーの人数"),
+    CHAMELEON("#chameleon_count", "カメレオン", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 24, "カメレオンの人数"),
+    BOMBER("#bomber_count", "爆弾魔", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 25, "爆弾魔の人数"),
+    ECHO("#echo_count", "エコー", Type.NUMERIC, 0, 50, 1, 5, Material.RED_CONCRETE, 1, 26, "エコーの人数"),
+    VAMPIRE("#vampire_count", "吸血鬼", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 28, "吸血鬼の人数"),
+    ZOMBIE("#zombie_count", "ゾンビ", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 29, "ゾンビの人数"),
+    SPELUNKER("#spelunker_count", "スペランカー", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 30, "スペランカーの人数"),
+    SOUL_EATER("#soul_eater_count", "ソウルイーター", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 31, "ソウルイーターの人数"),
+    FORGETTER("#forgetter_count", "忘却者", Type.NUMERIC, 0, 50, 1, 5, Material.YELLOW_CONCRETE, 1, 32, "忘却者の人数");
 
     public enum Type { NUMERIC, TOGGLE }
 

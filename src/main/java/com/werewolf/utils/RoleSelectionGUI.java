@@ -26,6 +26,8 @@ public class RoleSelectionGUI {
         new RoleEntry("ギャンブラー", 9, "#gambler_count", Material.LIME_CONCRETE, NamedTextColor.YELLOW),
         new RoleEntry("パン屋", 16, "#baker_count", Material.LIME_CONCRETE, NamedTextColor.GOLD),
         new RoleEntry("シーア", 18, "#seer_count", Material.LIME_CONCRETE, NamedTextColor.WHITE),
+        new RoleEntry("賢者", 21, "#sage_count", Material.LIME_CONCRETE, NamedTextColor.DARK_AQUA),
+        new RoleEntry("研究者", 22, "#researcher_count", Material.LIME_CONCRETE, NamedTextColor.AQUA),
     };
 
     private static final RoleEntry[] WOLF_ROLES = {
@@ -37,6 +39,7 @@ public class RoleSelectionGUI {
         new RoleEntry("トラッパー", 12, "#trapper_count", Material.RED_CONCRETE, NamedTextColor.DARK_RED),
         new RoleEntry("カメレオン", 13, "#chameleon_count", Material.RED_CONCRETE, NamedTextColor.DARK_RED),
         new RoleEntry("爆弾魔", 19, "#bomber_count", Material.RED_CONCRETE, NamedTextColor.DARK_RED),
+        new RoleEntry("エコー", 23, "#echo_count", Material.RED_CONCRETE, NamedTextColor.DARK_RED),
     };
 
     private static final RoleEntry[] THIRD_ROLES = {
@@ -44,6 +47,7 @@ public class RoleSelectionGUI {
         new RoleEntry("ゾンビ", 14, "#zombie_count", Material.YELLOW_CONCRETE, NamedTextColor.DARK_GREEN),
         new RoleEntry("スペランカー", 15, "#spelunker_count", Material.LIME_CONCRETE, NamedTextColor.LIGHT_PURPLE),
         new RoleEntry("ソウルイーター", 17, "#soul_eater_count", Material.YELLOW_CONCRETE, NamedTextColor.DARK_AQUA),
+        new RoleEntry("忘却者", 20, "#forgetter_count", Material.YELLOW_CONCRETE, NamedTextColor.BLUE),
     };
 
     public static void open(Player player) {
@@ -60,8 +64,8 @@ public class RoleSelectionGUI {
             }
         }
 
-        int rows = hasThird ? 4 : 3;
-        int size = rows * 9;
+        // 各陣営2行分の枠を確保する (役職数が9を超えても次の行にあふれるだけで衝突しない)
+        int size = hasThird ? 54 : 45;
 
         Inventory gui = Bukkit.createInventory(
             new RoleGUIHolder(),
@@ -69,7 +73,7 @@ public class RoleSelectionGUI {
             Component.text("===== 役職を選択 =====").color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD)
         );
 
-        // Row 0: Village team
+        // Rows 0-1: Village team
         gui.setItem(0, createHeader("【村人陣営】", Material.GREEN_STAINED_GLASS_PANE, NamedTextColor.GREEN));
         int slot = 1;
         for (RoleEntry role : VILLAGE_ROLES) {
@@ -78,19 +82,19 @@ public class RoleSelectionGUI {
             }
         }
 
-        // Row 1: Wolf team
-        gui.setItem(9, createHeader("【人狼陣営】", Material.RED_STAINED_GLASS_PANE, NamedTextColor.DARK_RED));
-        slot = 10;
+        // Rows 2-3: Wolf team
+        gui.setItem(18, createHeader("【人狼陣営】", Material.RED_STAINED_GLASS_PANE, NamedTextColor.DARK_RED));
+        slot = 19;
         for (RoleEntry role : WOLF_ROLES) {
             if (isRoleEnabled(config, role)) {
                 gui.setItem(slot++, createRoleItem(role));
             }
         }
 
-        // Row 2: Third team (if enabled)
+        // Row 4: Third team (if enabled)
         if (hasThird) {
-            gui.setItem(18, createHeader("【第三陣営】", Material.YELLOW_STAINED_GLASS_PANE, NamedTextColor.YELLOW));
-            slot = 19;
+            gui.setItem(36, createHeader("【第三陣営】", Material.YELLOW_STAINED_GLASS_PANE, NamedTextColor.YELLOW));
+            slot = 37;
             for (RoleEntry role : THIRD_ROLES) {
                 if (isRoleEnabled(config, role)) {
                     gui.setItem(slot++, createRoleItem(role));

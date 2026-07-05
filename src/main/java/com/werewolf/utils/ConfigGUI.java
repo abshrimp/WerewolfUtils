@@ -47,8 +47,9 @@ public class ConfigGUI {
 
         if (page == 1) {
             gui.setItem(0, header("【村人陣営】", Material.GREEN_STAINED_GLASS_PANE, NamedTextColor.GREEN));
-            gui.setItem(9, header("【人狼陣営】", Material.RED_STAINED_GLASS_PANE, NamedTextColor.RED));
-            gui.setItem(18, header("【第三陣営】", Material.YELLOW_STAINED_GLASS_PANE, NamedTextColor.GOLD));
+            gui.setItem(9, header("【村人陣営】", Material.GREEN_STAINED_GLASS_PANE, NamedTextColor.GREEN));
+            gui.setItem(18, header("【人狼陣営】", Material.RED_STAINED_GLASS_PANE, NamedTextColor.RED));
+            gui.setItem(27, header("【第三陣営】", Material.YELLOW_STAINED_GLASS_PANE, NamedTextColor.GOLD));
         }
 
         for (ConfigSetting s : ConfigSetting.values()) {

@@ -16,7 +16,8 @@ import java.util.Set;
 public class DropListener implements Listener {
 
     private static final Set<String> ROLE_ITEM_NAMES = Set.of(
-        "占い師の心（占い師用）", "推理の魂", "地雷", "カメレオンの仮面", "感染確認"
+        "占い師の心（占い師用）", "ゲッサーの書", "地雷", "カメレオンの仮面", "感染確認",
+        "賢者の盾", "サンプラー", "残響"
     );
 
     @EventHandler

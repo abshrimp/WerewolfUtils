@@ -22,6 +22,7 @@ public class WerewolfUtilsPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new DropListener(), this);
         Bukkit.getPluginManager().registerEvents(new InteractionListener(this), this);
         Bukkit.getScheduler().runTaskTimer(this, new ScoreboardWatcher(this), 1L, 1L);
+        Bukkit.getScheduler().runTaskTimer(this, new ItemDisguiseManager(), 1L, 1L);
         nametagManager = new NametagManager(this);
         Bukkit.getScheduler().runTaskTimer(this, nametagManager, 1L, 1L);
         if (getCommand("wwconfig") != null) {
